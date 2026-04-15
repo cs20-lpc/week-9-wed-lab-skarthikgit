@@ -1,6 +1,14 @@
 template <typename T>
 ArrayQueue<T>::ArrayQueue(int i) {
-    // TODO
+    if (i <= 0) {
+        throw string("queue size must be positive");
+    }
+
+    maxSize = i;
+    buffer = new T[maxSize];
+    frontIndex = 0;
+    backIndex = maxSize - 1;
+    this->length = 0;
 }
 
 template <typename T>
@@ -11,7 +19,7 @@ ArrayQueue<T>::ArrayQueue(const ArrayQueue<T>& copyObj) {
 template <typename T>
 ArrayQueue<T>& ArrayQueue<T>::operator=(const ArrayQueue<T>& rightObj) {
     if (this != &rightObj) {
-        clear();
+        delete[] buffer;
         copy(rightObj);
     }
     return *this;
@@ -19,37 +27,71 @@ ArrayQueue<T>& ArrayQueue<T>::operator=(const ArrayQueue<T>& rightObj) {
 
 template <typename T>
 ArrayQueue<T>::~ArrayQueue() {
-    clear();
+    delete[] buffer;
 }
 
 template <typename T>
 T ArrayQueue<T>::back() const {
-    // TODO
+    if (isEmpty()) {
+        throw string("cannot access back of an empty queue");
+    }
+
+    return buffer[backIndex];
 }
 
 template <typename T>
 void ArrayQueue<T>::clear() {
-    // TODO
+    this->length = 0;
+    frontIndex = 0;
+    backIndex = maxSize - 1;
 }
 
 template <typename T>
 void ArrayQueue<T>::copy(const ArrayQueue<T>& copyObj) {
-    // TODO
+    maxSize = copyObj.maxSize;
+    buffer = new T[maxSize];
+    this->length = copyObj.length;
+    frontIndex = copyObj.frontIndex;
+    backIndex = copyObj.backIndex;
+
+    for (int i = 0; i < maxSize; i++) {
+        buffer[i] = copyObj.buffer[i];
+    }
 }
 
 template <typename T>
 void ArrayQueue<T>::dequeue() {
-    // TODO
+    if (isEmpty()) {
+        throw string("cannot dequeue from an empty queue");
+    }
+
+    frontIndex = (frontIndex + 1) % maxSize;
+    this->length--;
+
+    if (isEmpty()) {
+        frontIndex = 0;
+        backIndex = maxSize - 1;
+    }
 }
 
 template <typename T>
 void ArrayQueue<T>::enqueue(const T& elem) {
-    // TODO
+    if (isFull()) {
+        throw string("cannot enqueue into a full queue");
+    }
+
+    backIndex = (backIndex + 1) % maxSize;
+    buffer[backIndex] = elem;
+    this->length++;
 }
 
 template <typename T>
 T ArrayQueue<T>::front() const {
-    // TODO
+    if (isEmpty()) {
+        throw string("cannot access front of an empty queue");
+    }
+
+    return buffer[frontIndex];
 }
 
 template <typename T>
